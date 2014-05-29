@@ -1,0 +1,6 @@
+[
+  {"name": "Roe", "age": 5,   "zip": 90100},
+  {"name": "Joe", "age": 22,    "zip": null},
+  {"name": null,  "age": "-20", "zip": "wow"},
+  {"name": "Joe", "age": 50,    "zip": 99999}
+]
