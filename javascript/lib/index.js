@@ -18,6 +18,10 @@ function flatten(list) {
   return list.reduce(concat);
 }
 
+function flatmap(list, f) {
+  return flatten(list.map(f));
+}
+
 function list(x) {
   return Array.prototype.slice.call(x, 0);
 }
@@ -28,11 +32,10 @@ function rest(list) {
 
 
 function applyValidators(validators, args) {
-  return flatten(
-    validators.map(function(validator) {
-      return validator.apply(null, args);
-    })
-  );
+  function apply(validator) {
+    return validator.apply(null, args);
+  }
+  return flatmap(validators, apply);
 }
 
 function Validator() {
