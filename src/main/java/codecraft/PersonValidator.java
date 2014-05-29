@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PersonValidator {
-    public List<String> validate(String name) {
+    public List<String> validate(String name, int age) {
         // name should not start with a lowercase character
         ArrayList<String> messages = new ArrayList<String>();
 
@@ -16,6 +16,13 @@ public class PersonValidator {
                 messages.add("Name does not start with UPPERCASE");
             }
         }
+
+        if (age < 1) {
+            messages.add("Age should be >= 1");
+        } else if (age > 100) {
+            messages.add("You're too old!");
+        }
+
         return messages;
     }
 }
