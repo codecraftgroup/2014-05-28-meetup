@@ -4,7 +4,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class PersonValidator {
-    public List<String> validate(String name, int age) {
+    public List<String> validate(String name, int age, int postalCode) {
         // name should not start with a lowercase character
         ArrayList<String> messages = new ArrayList<String>();
 
@@ -21,6 +21,10 @@ public class PersonValidator {
             messages.add("Age should be >= 1");
         } else if (age > 100) {
             messages.add("You're too old!");
+        }
+
+        if(Integer.toString(postalCode).length()!=5){
+            messages.add("Postal codes must have 5 digits");
         }
 
         return messages;
