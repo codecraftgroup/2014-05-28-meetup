@@ -1,5 +1,28 @@
 
-class Person: Printable {
+class Invalidation<T: AnyObject> { // possible Swift bug requires ": AnyObject"
+  
+  let that: T, errors: String[]
+  
+  init(_ t: T, _ e: String[] = []) { that = t; errors = e }
+  
+  subscript(invalid: T -> String?) -> Invalidation {
+    
+    if let error = invalid(that) { return Invalidation(that, [error] + errors) }
+      
+      return self
+  }
+
+  var description: String { return "Invalidation(\(that), \(errors))" }
+}
+
+extension Invalidation: Printable { }
+
+operator infix <*> { associativity left } // for Hal
+
+func <*> <T: AnyObject> (lhs: Invalidation<T>, rhs: T -> String?) -> Invalidation<T> { return lhs[rhs] }
+
+
+class Person {
   
   let nom: String, zip: Int, age: Int
   
@@ -8,25 +31,8 @@ class Person: Printable {
   var description: String { return "Person(\(nom), \(zip), \(age))" }
 }
 
-class Invalidation: Printable {
-  
-  let person: Person, errors: String[]
-  
-  init(_ p: Person, _ e: String[] = []) { person = p; errors = e }
-  
-  subscript(invalid: Person -> String?) -> Invalidation {
-    
-    if let error = invalid(person) { return Invalidation(person, [error] + errors) }
-      
-      return self
-  }
-  
-  var description: String { return "Invalidation(\(person), \(errors))" }
-}
+extension Person: Printable { }
 
-operator infix <*> { associativity left } // for Hal
-
-func <*> (this: Invalidation, invalid: Person -> String?) -> Invalidation { return this[invalid] }
 
 let people = [
   
@@ -35,14 +41,14 @@ let people = [
   Person("Roe", 90100, 5), Person("Joe", 0, 22), Person("", -1, -20), Person("Joe", 99999, 50),
 ]
 
-for person in people {
+func isFirstUppercase(s: String) -> Bool { // there MUST be a better way!
   
-  func isFirstUppercase(s: String) -> Bool { // there MUST be a better way!
-    
-    for ch in s { for up in s.uppercaseString { return ch == up } }; return false
-  }
+  for ch in s { for up in s.uppercaseString { return ch == up } }; return false
+}
 
-  println(Invalidation(person)
+for person in people { println(
+  
+  Invalidation(person)
     
     <*> { let age = $0.age; return !(0 < age && age <= 100) ? "!age" : nil }
     
